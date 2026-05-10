@@ -10,11 +10,7 @@ logger = logging.getLogger("agent")
 
 
 class BaseConfig(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        extra="ignore"
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 
 class AppConfig(BaseConfig):
@@ -23,6 +19,8 @@ class AppConfig(BaseConfig):
     host: str
     port: int
     version: str
+    docs_filepath: str
+    collection_name: str = "docs"
 
 
 class QdrantConfid(BaseConfig):
@@ -49,7 +47,9 @@ class DBConfig(BaseConfig):
 
     @property
     def database_url(self):
-        return f"postgresql+asyncpg://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.NAME}"
+        return (
+            f"postgresql+asyncpg://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.NAME}"
+        )
 
 
 app_config = AppConfig()
