@@ -3,6 +3,7 @@ name = "simple-ai-agent-practice"
 version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
+    "aiofiles>=25.1.0",
     "alembic>=1.18.4",
     "fastapi>=0.136.1",
     "langchain-ollama>=1.1.0",
@@ -12,7 +13,65 @@ dependencies = [
     "pydantic>=2.13.3",
     "pydantic-settings>=2.14.0",
     "qdrant-client>=1.17.1",
+    "ruff>=0.15.12",
     "sentence-transformers>=5.4.1",
     "sqlalchemy>=2.0.49",
     "uvicorn>=0.46.0",
 ]
+
+[tool.ruff]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+
+line-length = 100
+indent-width = 4
+
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+
+fixable = ["ALL"]
+unfixable = []
+
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+quote-style = "double"
+
+indent-style = "space"
+
+skip-magic-trailing-comma = false
+
+line-ending = "auto"
+
+docstring-code-format = false
+
+docstring-code-line-length = "dynamic"
