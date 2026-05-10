@@ -85,6 +85,7 @@ dependencies = [
 
   [tool.ruff.lint.per-file-ignores]
   "tests/**.py" = ["S101"]  # если включишь security-правила (S), в тестах assert ок
+  "src/routes.py" = ["B008"]
 
   [tool.ruff.format]
   quote-style = "double"
