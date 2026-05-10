@@ -2,11 +2,13 @@ import json
 
 from ollama import AsyncClient, ResponseError
 from src.config import llm_config, logger
+from src.services.question import QuestionService
 
 
 class QueryHandler:
     def __init__(self, ollama_client: AsyncClient):
         self._ollama = ollama_client
+        self._services_map = {"question": QuestionService}
 
     async def process(self, query: str):
         prompt = f"""
@@ -27,10 +29,16 @@ class QueryHandler:
                 messages=[{"role": "user", "content": prompt}],
                 options={"temperature": 0.1},
             )
-            response_content = response.message.content
-            answer = json.loads(response_content)
+            response_content = json.loads(response.message.content)
+            query_type = response_content["type"]
 
-            return {"answer": answer}
+            if query_type == "error":
+                raise ResponseError(response_content["error"])
+
+            service = self._services_map[query_type]
+
+            return await service.process(query)
+
         except json.JSONDecodeError:
             logger.error(
                 f"Ошибка при сериализации ответа в JSON. Ответ от модели на запрос {query} - {response_content}"
