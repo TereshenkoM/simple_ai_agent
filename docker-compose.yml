@@ -1,12 +1,13 @@
 services:
   backend:
-    build:
-      context: .
-    command: python3 main.py
+    build: .
+    command: python main.py
     ports:
       - "8000:8000"
+    environment:
+      - UV_PYTHON_DOWNLOADS=never
     env_file:
-      - .env
+        - .env
 
   qdrant:
     image: qdrant/qdrant
@@ -46,3 +47,4 @@ services:
 
 volumes:
   postgres-data:
+  qdrant_data:
