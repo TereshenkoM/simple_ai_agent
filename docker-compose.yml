@@ -9,9 +9,12 @@ services:
     env_file:
         - .env
     depends_on:
-      - qdrant
-      - ollama
-      - db
+      qdrant:
+        condition: service_started
+      ollama:
+        condition: service_started
+      db:
+        condition: service_started
 
   qdrant:
     image: qdrant/qdrant
@@ -30,10 +33,12 @@ services:
     volumes:
       - .:/code
       - ./ollama/ollama:/root/.ollama
+      - ./entrypoint.sh:/entrypoint.sh
     container_name: ollama
     pull_policy: always
     tty: true
     restart: always
+    entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
     environment:
       - OLLAMA_KEEP_ALIVE=24h
       - OLLAMA_HOST=0.0.0.0
