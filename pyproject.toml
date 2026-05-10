@@ -7,6 +7,7 @@ dependencies = [
     "alembic>=1.18.4",
     "fastapi>=0.136.1",
     "langchain-ollama>=1.1.0",
+    "langchain-text-splitters>=1.1.2",
     "langgraph>=1.1.10",
     "ollama>=0.6.2",
     "psycopg2-binary>=2.9.12",
@@ -19,8 +20,16 @@ dependencies = [
     "uvicorn>=0.46.0",
 ]
 
-[tool.ruff]
-exclude = [
+ [tool.ruff]
+  line-length = 100
+  indent-width = 4
+  target-version = "py312"
+  fix = true
+  show-fixes = true
+  unsafe-fixes = false
+
+  # Не лезем в артефакты/вендор
+ exclude = [
     ".bzr",
     ".direnv",
     ".eggs",
@@ -49,29 +58,40 @@ exclude = [
     "venv",
 ]
 
-line-length = 100
-indent-width = 4
 
-target-version = "py314"
+  [tool.ruff.lint]
+  # База: ошибки/стиль/импорты/баги/упрощения/pyupgrade + quality
+  select = [
+    "E", "F",        # pycodestyle + pyflakes
+    "W",             # warnings
+    "I",             # isort
+    "B",             # flake8-bugbear
+    "UP",            # pyupgrade
+    "SIM",           # simplify
+    "C4",            # comprehensions
+    "A",             # builtins shadowing
+    "ASYNC",         # async best practices
+    "PIE",           # misc improvements
+    "RUF",           # ruff-specific
+  ]
 
-[tool.ruff.lint]
-select = ["E4", "E7", "E9", "F"]
-ignore = []
+  # Часто осознанно игнорят вместе с formatter'ом или по практичности
+  ignore = [
+    "E501",   # line length: пусть форматтер решает
+  ]
 
-fixable = ["ALL"]
-unfixable = []
+  # Если хочешь, чтобы ruff сам конвертил кавычки/трейлинг и т.п. — включи:
+  # extend-select = ["COM"]  # flake8-commas (по желанию)
 
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+  [tool.ruff.lint.per-file-ignores]
+  "tests/**.py" = ["S101"]  # если включишь security-правила (S), в тестах assert ок
 
-[tool.ruff.format]
-quote-style = "double"
+  [tool.ruff.format]
+  quote-style = "double"
+  indent-style = "space"
+  line-ending = "auto"
+  docstring-code-format = true
 
-indent-style = "space"
-
-skip-magic-trailing-comma = false
-
-line-ending = "auto"
-
-docstring-code-format = false
-
-docstring-code-line-length = "dynamic"
+  [tool.ruff.lint.isort]
+  combine-as-imports = true
+  known-first-party = ["src"]
