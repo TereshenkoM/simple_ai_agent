@@ -1,8 +1,9 @@
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from fastapi.routing import APIRouter
 
+from ollama import AsyncClient
 from src.config import logger
-from src.dependencies import get_embedding_model, get_ollama_client, get_qdrant_client
+from src.dependencies import get_ollama_client
 from src.handlers.query import QueryHandler
 from src.shemas import AgentRequest
 
@@ -10,18 +11,13 @@ agents_router = APIRouter()
 
 
 @agents_router.post("/ask")
-async def ask(
-    request: AgentRequest,
-    qdrant_client=Depends(get_qdrant_client),
-    ollama_client=Depends(get_ollama_client),
-    embedding_model=Depends(get_embedding_model),
-):
+async def ask(request: AgentRequest, ollama_client: AsyncClient = Depends(get_ollama_client)):
     logger.info(f"user_id={request.user_id}, query={request.query}")
-    query_handler = QueryHandler(
-        embedding_model=embedding_model,
-        qdrant_client=qdrant_client,
-        ollama_client=ollama_client,
-    )
-    query_handler.process(request.query)
+    query_handler = QueryHandler(ollama_client)
+    try:
+        response = await query_handler.process(request.query)
+    except RuntimeError as e:
+        raise HTTPException(status_code=502, detail=str(e)) from e
 
-    return {"message": "ok"}
+    logger.info(f"response={response}")
+    return response

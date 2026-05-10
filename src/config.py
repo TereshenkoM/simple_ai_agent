@@ -29,6 +29,10 @@ class QdrantConfid(BaseConfig):
     host: str
     port: int
 
+    chunk_size: int = 800
+    chunk_overlap: int = 150
+    vector_size: int = 764
+
 
 class LLMConfig(BaseConfig):
     ollama_host: str
