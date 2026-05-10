@@ -1,6 +1,6 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
 import logging
 
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logging.basicConfig(
     level=logging.INFO,
@@ -26,8 +26,8 @@ class AppConfig(BaseConfig):
 class QdrantConfid(BaseConfig):
     model_config = SettingsConfigDict(env_prefix="QDRANT_")
 
-    qdrant_host: str
-    qdrant_port: int
+    host: str
+    port: int
 
 
 class LLMConfig(BaseConfig):

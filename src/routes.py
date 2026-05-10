@@ -1,10 +1,10 @@
-from fastapi.routing import APIRouter
 from fastapi import Depends
-from src.shemas import AgentRequest
-from src.config import logger
-from src.dependencies import get_ollama_client, get_qdrant_client, get_embedding_model
-from src.handlers.query import QueryHandler
+from fastapi.routing import APIRouter
 
+from src.config import logger
+from src.dependencies import get_embedding_model, get_ollama_client, get_qdrant_client
+from src.handlers.query import QueryHandler
+from src.shemas import AgentRequest
 
 agents_router = APIRouter()
 
