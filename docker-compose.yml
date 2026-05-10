@@ -8,6 +8,10 @@ services:
       - UV_PYTHON_DOWNLOADS=never
     env_file:
         - .env
+    depends_on:
+      - qdrant
+      - ollama
+      - db
 
   qdrant:
     image: qdrant/qdrant
