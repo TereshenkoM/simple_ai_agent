@@ -50,9 +50,15 @@ class DBConfig(BaseConfig):
     NAME: str
 
     @property
-    def database_url(self):
+    def async_database_url(self):
         return (
             f"postgresql+asyncpg://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.NAME}"
+        )
+
+    @property
+    def sync_database_url(self):
+        return (
+            f"postgresql+psycopg2://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.NAME}"
         )
 
 

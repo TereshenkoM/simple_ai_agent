@@ -1,13 +1,15 @@
 services:
   backend:
     build: .
-    command: python main.py
     ports:
       - "8000:8000"
     environment:
       - UV_PYTHON_DOWNLOADS=never
     env_file:
         - .env
+    volumes:
+      - ./entrypoints/pg_entrypoint.sh:/entrypoint.sh
+    entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
     depends_on:
       qdrant:
         condition: service_started
@@ -33,7 +35,7 @@ services:
     volumes:
       - .:/code
       - ./ollama/ollama:/root/.ollama
-      - ./entrypoint.sh:/entrypoint.sh
+      - ./entrypoints/ollama_entrypoint.sh:/entrypoint.sh
     container_name: ollama
     pull_policy: always
     tty: true
