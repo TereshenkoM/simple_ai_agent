@@ -9,7 +9,7 @@ from qdrant_client.models import Distance, PointStruct, VectorParams
 from src.config import app_config, logger, qdrant_config
 
 
-class EmbeddingService:
+class QdrantCollectionBuilder:
     def __init__(self, qdrant_client, embedding_model) -> None:
         self._qdrant_client = qdrant_client
         self._embedding_model = embedding_model
