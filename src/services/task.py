@@ -176,8 +176,6 @@ class TaskService:
 
         state = await workflow.ainvoke({**state, "messages": [HumanMessage(content=question)]})
 
-        # Финальный ответ для create_task берём из БД (а не из текста модели),
-        # чтобы исключить галлюцинации и проблемы сериализации tool-ответа.
         if any(
             isinstance(message, ToolMessage) and message.name == "create_task"
             for message in state["messages"]
