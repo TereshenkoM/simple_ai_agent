@@ -7,8 +7,7 @@ from src.config import app_config, llm_config, logger, qdrant_config
 
 # TODO Убрать дубли после MVP (dishka)
 class QuestionService:
-    @staticmethod
-    async def process(question: str):
+    async def process(self, question: str, user_id=None):
         qdrant_client = AsyncQdrantClient(host=qdrant_config.host, port=qdrant_config.port)
         embedding_model = SentenceTransformer(llm_config.embedding_model)
         ollama = AsyncClient(host=llm_config.ollama_host)

@@ -5,7 +5,7 @@ from ollama import AsyncClient
 from src.config import logger
 from src.dependencies import get_ollama_client
 from src.handlers.query import QueryHandler
-from src.shemas import AgentRequest
+from src.schemas import AgentRequest
 
 agents_router = APIRouter()
 
@@ -15,7 +15,7 @@ async def ask(request: AgentRequest, ollama_client: AsyncClient = Depends(get_ol
     logger.info(f"user_id={request.user_id}, query={request.query}")
     query_handler = QueryHandler(ollama_client)
     try:
-        response = await query_handler.process(request.query)
+        response = await query_handler.process(request.query, request.user_id)
     except RuntimeError as e:
         raise HTTPException(status_code=502, detail=str(e)) from e
 

@@ -3,23 +3,32 @@ import json
 from ollama import AsyncClient, ResponseError
 from src.config import llm_config, logger
 from src.services.question import QuestionService
+from src.services.task import TaskService
 
 
 class QueryHandler:
     def __init__(self, ollama_client: AsyncClient):
         self._ollama = ollama_client
-        self._services_map = {"question": QuestionService}
+        self._services_map = {"question": QuestionService(), "task": TaskService()}
 
-    async def process(self, query: str):
+    async def process(self, query: str, user_id=None):
         prompt = f"""
-        Пользователь может задать какой-либо вопрос для поиска информации на основе контекста.
-        Также пользователь может попросить создать задачу.
+        Классифицируй запрос пользователя по типу сервиса:
 
-        Если пользователь задаёт вопрос, то ответь мне JSON с ключом "type" и значением "question".
-        Если пользователь хочет создать задачу, то овтеть мне JSON с ключом "type" и значением "task".
-        В противном случае верни ключ "type" со значением "error".
+        - "question": запрос про поиск/ответ по документам/контексту (RAG), справка, объяснение, "что такое", "как работает" и т.п.
+        - "task": любые действия с задачами: создать задачу, добавить/изменить комментарий, обновить задачу, статус, номер, "добавь комментарий", "создай таск", "задача", "тикет" и т.п.
 
-        В ответе только валидный JSON и ничего лишнего. Без пояснений и текста. ТОЛЬКО ВАЛДИНЫЙ JSON.
+        Ответ:
+        - Если это "question" -> {{ "type": "question" }}
+        - Если это "task" -> {{ "type": "task" }}
+        - Иначе -> {{ "type": "error", "error": "<коротко почему>" }}
+
+        Примеры:
+        - "Создай задачу на проверку" -> {{ "type": "task" }}
+        - "Добавь комментарий протестировано" -> {{ "type": "task" }}
+        - "Что такое RAG?" -> {{ "type": "question" }}
+
+        В ответе только валидный JSON и ничего лишнего.
 
         Ввод пользователя: {query}
         """
@@ -37,7 +46,7 @@ class QueryHandler:
 
             service = self._services_map[query_type]
 
-            return await service.process(query)
+            return await service.process(query, user_id)
 
         except json.JSONDecodeError:
             logger.error(

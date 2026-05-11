@@ -5,10 +5,12 @@ from pydantic import BaseModel
 
 
 class AgentRequest(BaseModel):
-    user_id: int
+    user_id: int | None = None
     query: str
 
 
 class State(TypedDict):
     user_id: int
+    task_id: int
+    number: int
     messages: Annotated[list, add_messages]
